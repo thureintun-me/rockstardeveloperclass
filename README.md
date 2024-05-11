@@ -5,4 +5,6 @@
 
 * learning about linux command and development setup.
 
+## Day 2
 
+* learning git and github
