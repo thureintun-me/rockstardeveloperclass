@@ -1,37 +1,82 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Item from "./Item";
 
 function App() {
+  const inputRef = useRef();
   const [data, setData] = useState([
     {
       id: 1,
       name: "Milk",
-      price: 0.99,
+      done: true,
     },
     {
       id: 2,
       name: "Bread",
-      price: 1.99,
+      done: false,
     },
     {
-      id: 1,
+      id: 3,
       name: "Butter",
-      price: 2.99,
+      done: false,
     },
   ]);
 
-  const add = () => {
-    setData([...data, { id: 4, name: "Orange", price: 4.99 }]);
+  const add = (name) => {
+    const id = data[data.length - 1].id + 1;
+    setData([...data, { id: id, name: name, done: false }]);
   };
+
+  const remove = (id) => setData(data.filter((item) => item.id !== id));
+
+  const toggle = (id) => {
+    setData(
+      data.map((item) => {
+        if (item.id == id) {
+          item.done = !item.done;
+        }
+        return item;
+      })
+    );
+  };
+
   return (
     <div>
-      <h1>Todo</h1>
+      <h1>Todo({data.filter((item) => !item.done).length})</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const name = inputRef.current.value;
+          if (name == null) return;
+
+          add(inputRef.current.value);
+
+          inputRef.current.value = "";
+          inputRef.current.focus();
+        }}
+      >
+        <input ref={inputRef} />
+        <button>Add</button>
+      </form>
       <ul>
-        {data.map((item) => {
-          return <Item item={item} key={item.id} />;
-        })}
+        {data
+          .filter((item) => !item.done)
+          .map((item) => {
+            return (
+              <Item item={item} key={item.id} remove={remove} toggle={toggle} />
+            );
+          })}
       </ul>
-      <button onClick={add}>Add</button>
+      <hr />
+
+      <ul>
+        {data
+          .filter((item) => item.done)
+          .map((item) => {
+            return (
+              <Item item={item} key={item.id} remove={remove} toggle={toggle} />
+            );
+          })}
+      </ul>
     </div>
   );
 }
