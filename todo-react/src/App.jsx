@@ -1,6 +1,14 @@
 import { useRef, useState } from "react";
 import Item from "./Item";
-
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  List,
+} from "@mui/material";
+import { List as ListIcon } from "@mui/icons-material";
 function App() {
   const inputRef = useRef();
   const [data, setData] = useState([
@@ -40,24 +48,39 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Todo({data.filter((item) => !item.done).length})</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const name = inputRef.current.value;
-          if (name == null) return;
-
-          add(inputRef.current.value);
-
-          inputRef.current.value = "";
-          inputRef.current.focus();
+    <Box>
+      <AppBar position="static">
+        <Toolbar>
+          <ListIcon sx={{ ml: 2 }} />
+          <Typography variant={"h6"}>Todo</Typography>
+        </Toolbar>
+      </AppBar>
+      <Box
+        sx={{
+          mx: "auto",
+          mt: "4",
+          maxWidth: "md",
         }}
       >
-        <input ref={inputRef} />
-        <button>Add</button>
-      </form>
-      <ul>
+        <h1>Todo({data.filter((item) => !item.done).length})</h1>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const name = inputRef.current.value;
+            if (name == null) return;
+
+            add(inputRef.current.value);
+
+            inputRef.current.value = "";
+            inputRef.current.focus();
+          }}
+        >
+          <input ref={inputRef} />
+          <button>Add</button>
+        </form>
+      </Box>
+
+      <List>
         {data
           .filter((item) => !item.done)
           .map((item) => {
@@ -65,10 +88,11 @@ function App() {
               <Item item={item} key={item.id} remove={remove} toggle={toggle} />
             );
           })}
-      </ul>
+      </List>
+
       <hr />
 
-      <ul>
+      <List>
         {data
           .filter((item) => item.done)
           .map((item) => {
@@ -76,8 +100,8 @@ function App() {
               <Item item={item} key={item.id} remove={remove} toggle={toggle} />
             );
           })}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 }
 

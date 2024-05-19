@@ -1,13 +1,31 @@
+import {
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+
+import {
+  SquareOutlined as CheckBoxIcon,
+  Delete as DeleteIcon,
+  CheckBox as DoneIcon,
+} from "@mui/icons-material";
 export default function Item({ item, remove, toggle }) {
   return (
-    <li>
+    <ListItem>
       {item.done ? (
-        <button onClick={() => toggle(item.id)}>Undo</button>
+        <IconButton onClick={() => toggle(item.id)}>
+          <DoneIcon color="success" />
+        </IconButton>
       ) : (
-        <button onClick={() => toggle(item.id)}>done</button>
+        <IconButton onClick={() => toggle(item.id)}>
+          <CheckBoxIcon />
+        </IconButton>
       )}
-      {item.name}
-      <button onClick={() => remove(item.id)}>Del</button>
-    </li>
+      <ListItemText primary={item.name} />
+      <IconButton onClick={() => remove(item.id)}>
+        <DeleteIcon color="error" />
+      </IconButton>
+    </ListItem>
   );
 }
