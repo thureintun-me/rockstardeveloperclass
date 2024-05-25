@@ -7,8 +7,11 @@ import {
   IconButton,
   Typography,
   List,
+  OutlinedInput,
+  InputAdornment,
 } from "@mui/material";
-import { List as ListIcon } from "@mui/icons-material";
+import { List as ListIcon, Add as AddIcon } from "@mui/icons-material";
+import Header from "./Header";
 function App() {
   const inputRef = useRef();
   const [data, setData] = useState([
@@ -30,7 +33,7 @@ function App() {
   ]);
 
   const add = (name) => {
-    const id = data[data.length - 1].id + 1;
+    const id = data.length == 0 ? 1 : data[data.length - 1].id + 1;
     setData([...data, { id: id, name: name, done: false }]);
   };
 
@@ -49,20 +52,14 @@ function App() {
 
   return (
     <Box>
-      <AppBar position="static">
-        <Toolbar>
-          <ListIcon sx={{ ml: 2 }} />
-          <Typography variant={"h6"}>Todo</Typography>
-        </Toolbar>
-      </AppBar>
+      <Header count={data.filter((item) => !item.done).length} />
       <Box
         sx={{
           mx: "auto",
-          mt: "4",
+          mt: 4,
           maxWidth: "md",
         }}
       >
-        <h1>Todo({data.filter((item) => !item.done).length})</h1>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -75,32 +72,51 @@ function App() {
             inputRef.current.focus();
           }}
         >
-          <input ref={inputRef} />
-          <button>Add</button>
+          <OutlinedInput
+            fullWidth
+            inputRef={inputRef}
+            endAdornment={
+              <InputAdornment>
+                <IconButton type="submit">
+                  <AddIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
         </form>
+
+        <List>
+          {data
+            .filter((item) => !item.done)
+            .map((item) => {
+              return (
+                <Item
+                  item={item}
+                  key={item.id}
+                  remove={remove}
+                  toggle={toggle}
+                />
+              );
+            })}
+        </List>
+
+        <hr />
+
+        <List>
+          {data
+            .filter((item) => item.done)
+            .map((item) => {
+              return (
+                <Item
+                  item={item}
+                  key={item.id}
+                  remove={remove}
+                  toggle={toggle}
+                />
+              );
+            })}
+        </List>
       </Box>
-
-      <List>
-        {data
-          .filter((item) => !item.done)
-          .map((item) => {
-            return (
-              <Item item={item} key={item.id} remove={remove} toggle={toggle} />
-            );
-          })}
-      </List>
-
-      <hr />
-
-      <List>
-        {data
-          .filter((item) => item.done)
-          .map((item) => {
-            return (
-              <Item item={item} key={item.id} remove={remove} toggle={toggle} />
-            );
-          })}
-      </List>
     </Box>
   );
 }
