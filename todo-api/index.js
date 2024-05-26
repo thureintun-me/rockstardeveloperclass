@@ -12,9 +12,15 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const cors = require("cors");
+app.use(cors());
+
 app.get("/tasks", async function (req, res) {
   const data = await db.collection("tasks").find().toArray();
-  return res.json(data);
+
+  setTimeout(() => {
+    return res.json(data);
+  }, 1200);
 });
 
 app.get("/tasks/:id", async function (req, res) {

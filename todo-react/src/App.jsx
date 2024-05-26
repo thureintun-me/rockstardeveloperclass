@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Item from "./Item";
 import {
   AppBar,
@@ -9,46 +9,69 @@ import {
   List,
   OutlinedInput,
   InputAdornment,
+  Alert,
 } from "@mui/material";
 import { List as ListIcon, Add as AddIcon } from "@mui/icons-material";
 import Header from "./Header";
+
+const api = "http://localhost:8080/tasks";
 function App() {
   const inputRef = useRef();
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Milk",
-      done: true,
-    },
-    {
-      id: 2,
-      name: "Bread",
-      done: false,
-    },
-    {
-      id: 3,
-      name: "Butter",
-      done: false,
-    },
-  ]);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  const add = (name) => {
-    const id = data.length == 0 ? 1 : data[data.length - 1].id + 1;
-    setData([...data, { id: id, name: name, done: false }]);
+  const add = async (name) => {
+    const res = await fetch(api, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const item = await res.json();
+    setData([...data, item]);
   };
 
-  const remove = (id) => setData(data.filter((item) => item.id !== id));
+  const remove = async (_id) => {
+    setData(data.filter((item) => item._id !== _id));
+    const res = await fetch(`${api}/${_id}`, {
+      method: "DELETE",
+    });
+  };
 
-  const toggle = (id) => {
+  const toggle = (_id) => {
     setData(
       data.map((item) => {
-        if (item.id == id) {
+        if (item._id == _id) {
           item.done = !item.done;
         }
         return item;
       })
     );
+    fetch(`${api}/${_id}/toggle`, {
+      method: "PUT",
+    });
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(api);
+        if (response.ok) {
+          setData(await response.json());
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
+          setHasError(true);
+        }
+      } catch (error) {
+        setIsLoading(false);
+        setHasError(true);
+      }
+    })();
+  }, []);
 
   return (
     <Box>
@@ -60,6 +83,8 @@ function App() {
           maxWidth: "md",
         }}
       >
+        {isLoading && <Box sx={{ mb: 2, textAlign: "center" }}>Loading...</Box>}
+        {hasError && <Alert severity="error">Something went wrong</Alert>}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -76,7 +101,7 @@ function App() {
             fullWidth
             inputRef={inputRef}
             endAdornment={
-              <InputAdornment>
+              <InputAdornment position="end">
                 <IconButton type="submit">
                   <AddIcon />
                 </IconButton>
@@ -92,7 +117,7 @@ function App() {
               return (
                 <Item
                   item={item}
-                  key={item.id}
+                  key={item._id}
                   remove={remove}
                   toggle={toggle}
                 />
@@ -109,7 +134,7 @@ function App() {
               return (
                 <Item
                   item={item}
-                  key={item.id}
+                  key={item._id}
                   remove={remove}
                   toggle={toggle}
                 />
