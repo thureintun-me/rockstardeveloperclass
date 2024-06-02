@@ -75,7 +75,6 @@ function App() {
 
   return (
     <Box>
-      <Header count={data.filter((item) => !item.done).length} />
       <Box
         sx={{
           mx: "auto",
