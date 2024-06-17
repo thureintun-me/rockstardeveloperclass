@@ -8,6 +8,9 @@ const AppContext = createContext();
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Template from "./Template";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
 
 export function useApp() {
     return useContext(AppContext);
@@ -22,6 +25,14 @@ const router = createBrowserRouter([
 				path: "/",
 				element: <Home />,
 			},
+			{
+				path: "/login",
+				element: <Login />,
+			},
+			{
+				path: "/register",
+				element: <Register />,
+			},
 		],
 	},
 ]);
@@ -29,6 +40,7 @@ const router = createBrowserRouter([
 export default function ThemedApp() {
 	const [mode, setMode] = useState("dark");
     const [drawer, setDrawer] = useState(false);
+	const [auth,setAuth] = useState(false)
 
 	const theme = useMemo(() => {
 		return createTheme({
@@ -40,7 +52,7 @@ export default function ThemedApp() {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<AppContext.Provider value={{ mode, setMode, drawer, setDrawer }}>
+			<AppContext.Provider value={{ mode, setMode, drawer, setDrawer, auth, setAuth }}>
 				<RouterProvider router={router} />
 				<CssBaseline />
 			</AppContext.Provider>

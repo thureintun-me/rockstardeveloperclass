@@ -30,7 +30,7 @@ export default function Header() {
 					</Link>
 				)}
 
-				<Typography sx={{ ml: 2, flexGrow: 1 }}>Todo</Typography>
+				<Typography sx={{ ml: 2, flexGrow: 1 }}>Home</Typography>
 
 				{mode === "dark" ? (
 					<IconButton onClick={() => setMode("light")}>
